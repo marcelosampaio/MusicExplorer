@@ -1,0 +1,92 @@
+.music-card {
+  background: white;
+  border-radius: 10px;
+  padding: 0.8rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.music-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.music-card h3 {
+  font-size: 1rem;
+  margin: 0.5rem 0 0.2rem;
+}
+
+.music-card p {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.music-card button {
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.music-card button:first-of-type {
+  background: #1db954;
+  color: white;
+}
+
+.music-card button:first-of-type:hover {
+  background: #17a348;
+}
+
+.music-card button:last-of-type {
+  background: #f1f1f1;
+}
+
+.music-card button:last-of-type:hover {
+  background: #ddd;
+}
+
+/* Tablet (601px a 1024px) */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .music-card {
+    padding: 1rem;
+  }
+
+  .music-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .music-card p {
+    font-size: 1rem;
+  }
+
+  .music-card button {
+    font-size: 1rem;
+    padding: 0.6rem;
+  }
+}
+
+/* Desktop (1025px em diante) */
+@media (min-width: 1025px) {
+  .music-card {
+    padding: 1.2rem;
+  }
+
+  .music-card h3 {
+    font-size: 1.2rem;
+  }
+
+  .music-card p {
+    font-size: 1.05rem;
+  }
+
+  .music-card button {
+    font-size: 1.05rem;
+    padding: 0.7rem;
+  }
+}

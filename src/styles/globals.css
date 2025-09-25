@@ -1,7 +1,9 @@
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
   background: #fafafa;
+  font-size: 14px; /* mobile */
 }
 
 header {
@@ -28,4 +30,18 @@ nav a {
   border-radius: 8px;
   padding: 0.5rem;
   text-align: center;
+}
+
+/* Tablet */
+@media (min-width: 601px) and (max-width: 1024px) {
+  body {
+    font-size: 15px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+  body {
+    font-size: 16px;
+  }
 }

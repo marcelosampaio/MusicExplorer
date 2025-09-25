@@ -1,0 +1,63 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #222;
+  color: #fff;
+  padding: 1rem;
+}
+
+.logo {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+nav {
+  display: flex;
+  gap: 1rem;
+}
+
+nav a {
+  color: #fff;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+nav a:hover {
+  color: #1db954;
+}
+
+/* Tablet (601px a 1024px) */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1.2rem 2rem;
+  }
+
+  .logo {
+    font-size: 1.6rem;
+  }
+
+  nav a {
+    font-size: 1rem;
+  }
+}
+
+/* Desktop (1025px em diante) */
+@media (min-width: 1025px) {
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1.5rem 3rem;
+  }
+
+  .logo {
+    font-size: 1.8rem;
+  }
+
+  nav a {
+    font-size: 1.1rem;
+  }
+}
