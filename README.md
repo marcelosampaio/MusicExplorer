@@ -10,57 +10,117 @@ O sistema conta com **login e registro via Supabase**, além de **gerenciamento 
 - **UI responsiva** para web e mobile.  
 
 # 👤 Histórias de Usuário
-- **HU-01 - Registro de Usuário**  
-  Como visitante, quero me registrar no Music Explorer para ter acesso a funcionalidades exclusivas como salvar músicas favoritas.
 
-- **HU-02 - Login de Usuário**  
-  Como usuário registrado, quero poder fazer login para acessar minhas preferências.
+## 📊 Priorização
+- **Fase 1 (MVP da aplicação):**  
+  - HU-05 — Busca de Músicas  
+  - HU-07 — Player de Preview  
+  - HU-09 — Responsividade Mobile  
 
-- **HU-03 - Lembrete de Senha**  
-  Como usuário, quero poder redefinir minha senha em caso de esquecimento.
+- **Fase 2 (Interatividade adicional):**  
+  - HU-06 — Favoritos  
+  - HU-08 — Tela de Detalhes  
+  - HU-10 — Persistência de Favoritos no Supabase  
 
-- **HU-04 - Perfil de Usuário**  
-  Como usuário autenticado, quero visualizar e editar meu perfil.
+- **Fase 3 (Autenticação e perfil):**  
+  - HU-01 — Registro de Usuário  
+  - HU-02 — Login de Usuário  
+  - HU-03 — Lembrete de Senha  
+  - HU-04 — Perfil de Usuário  
 
-- **HU-05 - Busca de Músicas**  
-  Como usuário, quero buscar músicas, artistas ou álbuns por termos e ver resultados relevantes.
+---
 
-- **HU-06 - Favoritos**  
-  Como usuário, quero marcar músicas como favoritas e acessá-las depois.
+## HU-01 — Registro de Usuário  
+*Como visitante, quero me registrar no Music Explorer para ter acesso a funcionalidades exclusivas como salvar músicas favoritas.*  
 
-- **HU-07 - Player de Preview**  
-  Como usuário, quero ouvir trechos de músicas dentro da aplicação.
+**✅ Critérios de Aceitação:**  
+- O formulário deve solicitar e validar nome, e-mail e senha.  
+- Após registro bem-sucedido, o usuário deve ser redirecionado para a área autenticada.  
 
-- **HU-08 - Tela de Detalhes**  
-  Como usuário, quero visualizar detalhes de um artista, álbum ou música.
+---
 
-- **HU-09 - Responsividade e Interatividade Mobile**  
-  Como usuário em dispositivos móveis, quero ter uma experiência fluida com design responsivo e interações por gestos.
+## HU-02 — Login de Usuário  
+*Como usuário registrado, quero poder fazer login para acessar minhas preferências.*  
 
-# 📌 Backlog Inicial
+**✅ Critérios de Aceitação:**  
+- O login deve aceitar e-mail e senha cadastrados.  
+- Mensagem de erro exibida em caso de credenciais inválidas.  
+- Após login, usuário acessa seu perfil e favoritos.  
 
-## Sprint 1 — Setup e Autenticação
-- Configurar repositório GitHub.  
-- Configurar Firebase Hosting.  
-- Configurar Supabase (Auth + tabelas).  
-- Implementar **HU-01 (Registro)**.  
-- Implementar **HU-02 (Login)**.  
-- Implementar **HU-03 (Lembrete de senha)**.  
-- Implementar **HU-04 (Perfil)**.  
+---
 
-## Sprint 2 — Busca e Resultados
-- Implementar **HU-05 (Busca por termo)**.  
-- Criar listagem de resultados com UI responsiva.  
-- Implementar **HU-08 (Tela de Detalhes)**.  
+## HU-03 — Lembrete de Senha  
+*Como usuário, quero redefinir minha senha em caso de esquecimento para continuar acessando minha conta.*  
 
-## Sprint 3 — Favoritos e Player
-- Implementar **HU-06 (Favoritos)**.  
-- Implementar **HU-07 (Player de preview)**.  
-- Sincronizar favoritos com usuário logado.  
-- Swipe para remover favorito (**HU-09**).  
+**✅ Critérios de Aceitação:**  
+- Link “Esqueci minha senha” disponível na tela de login.  
+- Usuário deve receber instruções de redefinição.  
 
-## Sprint 4 — UX, Responsividade e Deploy
-- Implementar **HU-09 (Responsividade)**.  
-- Ajustes de UX/UI.  
-- Deploy final.  
-- Preparar apresentação final.
+---
+
+## HU-04 — Perfil de Usuário  
+*Como usuário autenticado, quero visualizar e editar meu perfil para manter meus dados atualizados.*  
+
+**✅ Critérios de Aceitação:**  
+- Exibir nome, e-mail e foto de perfil.  
+- Permitir alteração de dados pessoais (nome e senha).  
+
+---
+
+## HU-05 — Busca de Músicas  
+*Como usuário, quero buscar músicas, artistas ou álbuns por termos para encontrar rapidamente o que desejo ouvir.*  
+
+**✅ Critérios de Aceitação:**  
+- Campo de busca funcional.  
+- Resultados exibidos em lista de cartões (`MusicCard`).  
+- Feedback visual quando não houver resultados.  
+
+---
+
+## HU-06 — Favoritos  
+*Como usuário, quero marcar músicas como favoritas e acessá-las depois para ouvir novamente.*  
+
+**✅ Critérios de Aceitação:**  
+- Botão de favoritar em cada música.  
+- Lista separada de favoritos disponível no menu.  
+- Alterações refletidas na interface imediatamente.  
+
+---
+
+## HU-07 — Player de Preview  
+*Como usuário, quero ouvir trechos de músicas dentro da aplicação para decidir se gosto da faixa.*  
+
+**✅ Critérios de Aceitação:**  
+- Player integrado em cada cartão de música.  
+- Botão de play/pause funcional.  
+- Reproduzir preview direto da API do iTunes.  
+
+---
+
+## HU-08 — Tela de Detalhes  
+*Como usuário, quero visualizar detalhes de um artista, álbum ou música para conhecer mais informações.*  
+
+**✅ Critérios de Aceitação:**  
+- Ao clicar em um item, abrir tela/detalhe.  
+- Exibir capa, título, artista e informações adicionais.  
+
+---
+
+## HU-09 — Responsividade e Interatividade Mobile  
+*Como usuário em dispositivos móveis, quero ter uma experiência fluida com design responsivo e interações por gestos.*  
+
+**✅ Critérios de Aceitação:**  
+- Layout Mobile-First.  
+- Componentes adaptáveis a diferentes tamanhos de tela.  
+- Menu e botões acessíveis via toque.  
+
+---
+
+## HU-10 — Persistência de Favoritos no Supabase  
+*Como usuário autenticado, quero que minhas músicas favoritas sejam salvas no Supabase, para que eu possa acessá-las em qualquer dispositivo.*  
+
+**✅ Critérios de Aceitação:**  
+- Apenas usuários autenticados podem salvar/excluir favoritos.  
+- Favoritos gravados no banco de dados Supabase.  
+- Lista de favoritos carregada automaticamente ao fazer login.  
+- Alterações (adicionar/remover) refletidas tanto na interface quanto no Supabase.  
