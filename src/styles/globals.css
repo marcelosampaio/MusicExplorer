@@ -1,0 +1,78 @@
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #fafafa;
+  font-size: 14px; /* mobile */
+  line-height: 1.4;
+  color: #222;
+}
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Header básico */
+header {
+  background: #222;
+  color: #fff;
+  padding: 1rem;
+}
+
+nav a {
+  color: #fff;
+  margin-right: 1rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+nav a:hover {
+  color: #1db954;
+}
+
+/* Grid da lista de músicas */
+.music-list {
+  display: grid;
+  grid-template-columns: 1fr; /* mobile */
+  gap: 1rem;
+  padding: 1rem 0;
+}
+
+/* Tablet */
+@media (min-width: 601px) and (max-width: 1024px) {
+  body {
+    font-size: 15px;
+  }
+
+  main {
+    padding: 1.5rem 2rem;
+  }
+
+  .music-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+  body {
+    font-size: 16px;
+  }
+
+  main {
+    padding: 2rem 3rem;
+  }
+
+  .music-list {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+}
