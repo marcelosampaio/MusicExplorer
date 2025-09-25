@@ -1,0 +1,64 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #222;
+  color: #fff;
+  padding: 1rem;
+}
+
+.logo {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+/* Tablet */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 1.2rem 2rem;
+  }
+
+  nav {
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .logo {
+    font-size: 1.6rem;
+  }
+
+  nav a {
+    font-size: 1rem;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+  .header {
+    padding: 1.5rem 3rem;
+  }
+
+  .logo {
+    font-size: 1.8rem;
+  }
+
+  nav a {
+    font-size: 1.1rem;
+  }
+}
