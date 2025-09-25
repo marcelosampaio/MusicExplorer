@@ -1,11 +1,25 @@
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 body {
-  margin: 0;
   font-family: Arial, sans-serif;
   background: #fafafa;
   font-size: 14px; /* mobile */
+  line-height: 1.4;
+  color: #222;
 }
 
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Header básico */
 header {
   background: #222;
   color: #fff;
@@ -16,20 +30,19 @@ nav a {
   color: #fff;
   margin-right: 1rem;
   text-decoration: none;
+  transition: color 0.2s;
 }
 
+nav a:hover {
+  color: #1db954;
+}
+
+/* Grid da lista de músicas */
 .music-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: 1fr; /* mobile */
   gap: 1rem;
-  padding: 1rem;
-}
-
-.music-card {
-  background: white;
-  border-radius: 8px;
-  padding: 0.5rem;
-  text-align: center;
+  padding: 1rem 0;
 }
 
 /* Tablet */
@@ -37,11 +50,29 @@ nav a {
   body {
     font-size: 15px;
   }
+
+  main {
+    padding: 1.5rem 2rem;
+  }
+
+  .music-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
 }
 
 /* Desktop */
 @media (min-width: 1025px) {
   body {
     font-size: 16px;
+  }
+
+  main {
+    padding: 2rem 3rem;
+  }
+
+  .music-list {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
   }
 }

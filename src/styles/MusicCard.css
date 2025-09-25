@@ -51,7 +51,7 @@
   background: #ddd;
 }
 
-/* Tablet (601px a 1024px) */
+/* Tablet */
 @media (min-width: 601px) and (max-width: 1024px) {
   .music-card {
     padding: 1rem;
@@ -71,7 +71,7 @@
   }
 }
 
-/* Desktop (1025px em diante) */
+/* Desktop */
 @media (min-width: 1025px) {
   .music-card {
     padding: 1.2rem;

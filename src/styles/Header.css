@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   background: #222;
   color: #fff;
   padding: 1rem;
@@ -14,26 +15,28 @@
 
 nav {
   display: flex;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 nav a {
   color: #fff;
-  font-size: 0.9rem;
   text-decoration: none;
-  transition: color 0.2s;
+  font-size: 0.9rem;
 }
 
-nav a:hover {
-  color: #1db954;
-}
-
-/* Tablet (601px a 1024px) */
+/* Tablet */
 @media (min-width: 601px) and (max-width: 1024px) {
   .header {
     flex-direction: row;
     justify-content: space-between;
     padding: 1.2rem 2rem;
+  }
+
+  nav {
+    flex-direction: row;
+    gap: 1rem;
   }
 
   .logo {
@@ -45,11 +48,9 @@ nav a:hover {
   }
 }
 
-/* Desktop (1025px em diante) */
+/* Desktop */
 @media (min-width: 1025px) {
   .header {
-    flex-direction: row;
-    justify-content: space-between;
     padding: 1.5rem 3rem;
   }
 
