@@ -1,4 +1,5 @@
 import MusicCard from "./MusicCard";
+import "./../styles/MusicList.css";
 
 function MusicList({ musics, favorites = [], onToggleFavorite, onPlayPreview }) {
   return (
