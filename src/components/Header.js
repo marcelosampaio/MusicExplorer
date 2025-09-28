@@ -1,15 +1,12 @@
 import { Link } from "react-router-dom";
 import "./../styles/Header.css";
+import NavBar from "./NavBar";
 
 function Header() {
   return (
     <header className="header">
       <h1 className="logo">🎵 Music Explorer</h1>
-      <nav>
-        <Link to="/">Home</Link>
-        <Link to="/favorites">Favoritos</Link>
-        <Link to="/profile">Perfil</Link>
-      </nav>
+      <NavBar />
     </header>
   );
 }
