@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import SearchBar from "../components/SearchBar";
 import MusicList from "../components/MusicList";
+import "./../styles/SearchBar.css";
 
 function Home() {
   const [musics, setMusics] = useState([]);
@@ -54,7 +55,7 @@ function Home() {
 
   return (
     <div>
-      <SearchBar onSearch={handleSearch} />
+      <SearchBar className="search-bar" onSearch={handleSearch} />
       {loading ? (
         <p>Carregando...</p>
       ) : (

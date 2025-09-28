@@ -1,9 +1,13 @@
 .nav-bar {
-    background: #222;
+    background: #1db954;
     color: #fff;
     padding: 1rem;
     display: flex;
     justify-content: flex-start;
     flex-direction: row;
     align-items: flex-start;
+}
+
+.nav-link {
+    margin-right: "10px";
 }
