@@ -20,7 +20,7 @@ function Home() {
         id: item.trackId,
         title: item.trackName,
         artist: item.artistName,
-        cover: item.artworkUrl100,
+        cover: item.artworkUrl100.replace(/(\d+)x\1bb/, "600x600bb"),
         preview: item.previewUrl,
       }));
       setMusics(formatted);
