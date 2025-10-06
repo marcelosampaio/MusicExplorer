@@ -7,15 +7,32 @@ function Home() {
   const [musics, setMusics] = useState([]);
   const [loading, setLoading] = useState(false);
   const [favorites, setFavorites] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
   const currentAudio = useRef(null);
 
   const handleSearch = async (term) => {
+    if (!term.trim()) {
+      setMusics([]);
+      setErrorMessage("Digite um termo para buscar.");
+      return;
+    }
+
     setLoading(true);
+    setErrorMessage("");
     try {
       const response = await fetch(
-        `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=music&limit=20`
+        `https://corsproxy.io/?https://itunes.apple.com/search?term=${encodeURIComponent(
+          term
+        )}&media=music&limit=20`
       );
       const data = await response.json();
+
+      if (!data.results || data.results.length === 0) {
+        setMusics([]);
+        setErrorMessage(`Nenhum resultado encontrado para "${term}".`);
+        return;
+      }
+
       const formatted = data.results.map((item) => ({
         id: item.trackId,
         title: item.trackName,
@@ -23,9 +40,12 @@ function Home() {
         cover: item.artworkUrl100.replace(/(\d+)x\1bb/, "600x600bb"),
         preview: item.previewUrl,
       }));
+
       setMusics(formatted);
+      setErrorMessage("");
     } catch (error) {
       console.error("Erro ao buscar músicas:", error);
+      setErrorMessage("Ocorreu um erro ao buscar músicas. Tente novamente.");
     } finally {
       setLoading(false);
     }
@@ -56,9 +76,12 @@ function Home() {
   return (
     <div>
       <SearchBar className="search-bar" onSearch={handleSearch} />
-      {loading ? (
-        <p>Carregando...</p>
-      ) : (
+
+      {loading && <p>Carregando...</p>}
+
+      {!loading && errorMessage && <p>{errorMessage}</p>}
+
+      {!loading && !errorMessage && (
         <MusicList
           musics={musics}
           favorites={favorites}
