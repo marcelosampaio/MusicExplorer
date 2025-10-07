@@ -1,15 +1,61 @@
+import React, { useState } from "react";
+import { TextField, Button, Box } from "@mui/material";
+
 function SearchBar({ onSearch }) {
+  const [term, setTerm] = useState("");
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const term = e.target.search.value;
-    onSearch(term);
+    if (term.trim()) {
+      onSearch(term);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="search-bar">
-      <input type="text" name="search" placeholder="Buscar músicas, álbuns, artistas..." />
-      <button type="submit">Buscar</button>
-    </form>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 2,
+        mt: 2,
+        mb: 2,
+        px: 2,
+        flexWrap: "wrap",
+      }}
+    >
+      <TextField
+        variant="outlined"
+        placeholder="Buscar músicas, álbuns, artistas..."
+        value={term}
+        onChange={(e) => setTerm(e.target.value)}
+        sx={{
+          flexGrow: 1,
+          minWidth: { xs: "180px", sm: "300px" },
+          bgcolor: "background.paper",
+          borderRadius: 1,
+          input: { fontSize: { xs: 16, sm: 18 } },
+        }}
+      />
+      <Button
+        type="submit"
+        variant="contained"
+        sx={{
+          bgcolor: "#1db954",
+          color: "#fff",
+          fontSize: { xs: 14, sm: 16 },
+          px: 3,
+          py: 1.2,
+          "&:hover": { bgcolor: "#17a348" },
+          mt: { xs: 0, sm: 0 },
+        }}
+      >
+        Buscar
+      </Button>
+    </Box>
   );
 }
 

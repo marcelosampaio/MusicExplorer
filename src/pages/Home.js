@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
 import SearchBar from "../components/SearchBar";
 import MusicList from "../components/MusicList";
-import "./../styles/SearchBar.css";
 
 function Home() {
   const [musics, setMusics] = useState([]);
