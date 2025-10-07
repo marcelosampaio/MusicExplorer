@@ -1,34 +1,44 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import SearchBar from "../components/SearchBar";
 import MusicList from "../components/MusicList";
 
 function Home() {
-  const [musics, setMusics] = useState([]);
+  const [allResults, setAllResults] = useState([]); // todos os resultados da API
+  const [musics, setMusics] = useState([]); // resultados da página atual
   const [loading, setLoading] = useState(false);
   const [favorites, setFavorites] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const [term, setTerm] = useState("");
+  const [page, setPage] = useState(1);
+  const resultsPerPage = 20;
   const currentAudio = useRef(null);
 
-  const handleSearch = async (term) => {
-    if (!term.trim()) {
+  const fetchMusics = async (searchTerm) => {
+    if (!searchTerm.trim()) {
+      setAllResults([]);
       setMusics([]);
       setErrorMessage("Digite um termo para buscar.");
+      setPage(1);
       return;
     }
 
     setLoading(true);
     setErrorMessage("");
+
     try {
       const response = await fetch(
         `https://corsproxy.io/?https://itunes.apple.com/search?term=${encodeURIComponent(
-          term
-        )}&media=music&limit=20`
+          searchTerm
+        )}&media=music&limit=200`
       );
       const data = await response.json();
 
       if (!data.results || data.results.length === 0) {
+        setAllResults([]);
         setMusics([]);
-        setErrorMessage(`Nenhum resultado encontrado para "${term}".`);
+        setErrorMessage(`Nenhum resultado encontrado para "${searchTerm}".`);
+        setPage(1);
         return;
       }
 
@@ -40,14 +50,34 @@ function Home() {
         preview: item.previewUrl,
       }));
 
-      setMusics(formatted);
-      setErrorMessage("");
+      setAllResults(formatted);
+      setPage(1); // resetar página
+      setMusics(formatted.slice(0, resultsPerPage));
     } catch (error) {
       console.error("Erro ao buscar músicas:", error);
+      setAllResults([]);
+      setMusics([]);
       setErrorMessage("Ocorreu um erro ao buscar músicas. Tente novamente.");
+      setPage(1);
     } finally {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    // atualizar musics sempre que a página mudar
+    const start = (page - 1) * resultsPerPage;
+    setMusics(allResults.slice(start, start + resultsPerPage));
+  }, [page, allResults]);
+
+  const handleSearch = (searchTerm) => {
+    setTerm(searchTerm);
+    fetchMusics(searchTerm);
+  };
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const toggleFavorite = (id) => {
@@ -72,23 +102,57 @@ function Home() {
     };
   };
 
+  const totalPages = Math.ceil(allResults.length / resultsPerPage);
+
   return (
-    <div>
-      <SearchBar className="search-bar" onSearch={handleSearch} />
+    <Box sx={{ px: 2, mt: 2 }}>
+      <SearchBar onSearch={handleSearch} />
 
-      {loading && <p>Carregando...</p>}
+      {loading && <Typography align="center">Carregando...</Typography>}
 
-      {!loading && errorMessage && <p>{errorMessage}</p>}
+      {!loading && errorMessage && (
+        <Typography align="center" color="error">
+          {errorMessage}
+        </Typography>
+      )}
 
       {!loading && !errorMessage && (
-        <MusicList
-          musics={musics}
-          favorites={favorites}
-          onToggleFavorite={toggleFavorite}
-          onPlayPreview={playPreview}
-        />
+        <>
+          <MusicList
+            musics={musics}
+            favorites={favorites}
+            onToggleFavorite={toggleFavorite}
+            onPlayPreview={playPreview}
+          />
+
+          {totalPages > 1 && (
+            <Stack
+              direction="row"
+              spacing={2}
+              justifyContent="center"
+              alignItems="center"
+              sx={{ mt: 2 }}
+            >
+              <Button
+                variant="contained"
+                onClick={() => handlePageChange(page - 1)}
+                disabled={page === 1 || loading}
+              >
+                Anterior
+              </Button>
+              <Typography>Página {page} de {totalPages}</Typography>
+              <Button
+                variant="contained"
+                onClick={() => handlePageChange(page + 1)}
+                disabled={page === totalPages || loading}
+              >
+                Próximo
+              </Button>
+            </Stack>
+          )}
+        </>
       )}
-    </div>
+    </Box>
   );
 }
 
