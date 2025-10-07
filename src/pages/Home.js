@@ -14,6 +14,7 @@ function Home() {
   const resultsPerPage = 20;
   const currentAudio = useRef(null);
 
+  // Função para buscar músicas na API iTunes
   const fetchMusics = async (searchTerm) => {
     if (!searchTerm.trim()) {
       setAllResults([]);
@@ -64,28 +65,33 @@ function Home() {
     }
   };
 
+  // Atualiza a lista de músicas quando muda a página
   useEffect(() => {
-    // atualizar musics sempre que a página mudar
     const start = (page - 1) * resultsPerPage;
     setMusics(allResults.slice(start, start + resultsPerPage));
   }, [page, allResults]);
 
+  // Submeter busca
   const handleSearch = (searchTerm) => {
     setTerm(searchTerm);
     fetchMusics(searchTerm);
   };
 
+  // Navegação de páginas
   const handlePageChange = (newPage) => {
+    if (newPage < 1 || newPage > Math.ceil(allResults.length / resultsPerPage)) return;
     setPage(newPage);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // Favoritar/desfavoritar
   const toggleFavorite = (id) => {
     setFavorites((prev) =>
       prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id]
     );
   };
 
+  // Tocar preview
   const playPreview = (previewUrl) => {
     if (!previewUrl) return;
 
@@ -105,13 +111,25 @@ function Home() {
   const totalPages = Math.ceil(allResults.length / resultsPerPage);
 
   return (
-    <Box sx={{ px: 2, mt: 2 }}>
+    <Box
+      sx={{
+        px: { xs: 1, sm: 2, md: 3 },
+        mt: 2,
+        maxWidth: 1200,
+        mx: "auto",
+        width: "100%",
+      }}
+    >
       <SearchBar onSearch={handleSearch} />
 
-      {loading && <Typography align="center">Carregando...</Typography>}
+      {loading && (
+        <Typography align="center" sx={{ my: 4 }}>
+          Carregando...
+        </Typography>
+      )}
 
       {!loading && errorMessage && (
-        <Typography align="center" color="error">
+        <Typography align="center" color="error" sx={{ my: 4 }}>
           {errorMessage}
         </Typography>
       )}
@@ -127,11 +145,11 @@ function Home() {
 
           {totalPages > 1 && (
             <Stack
-              direction="row"
+              direction={{ xs: "column", sm: "row" }}
               spacing={2}
               justifyContent="center"
               alignItems="center"
-              sx={{ mt: 2 }}
+              sx={{ mt: 3 }}
             >
               <Button
                 variant="contained"
@@ -140,7 +158,9 @@ function Home() {
               >
                 Anterior
               </Button>
-              <Typography>Página {page} de {totalPages}</Typography>
+              <Typography>
+                Página {page} de {totalPages}
+              </Typography>
               <Button
                 variant="contained"
                 onClick={() => handlePageChange(page + 1)}
