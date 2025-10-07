@@ -153,6 +153,12 @@ function Home() {
             >
               <Button
                 variant="contained"
+                sx={{
+                  bgcolor: "#1DB954",
+                  "&:hover": { bgcolor: "#1ed760" },
+                  textTransform: "none",
+                  px: 3,
+                }}
                 onClick={() => handlePageChange(page - 1)}
                 disabled={page === 1 || loading}
               >
@@ -163,6 +169,12 @@ function Home() {
               </Typography>
               <Button
                 variant="contained"
+                sx={{
+                  bgcolor: "#1DB954",
+                  "&:hover": { bgcolor: "#1ed760" },
+                  textTransform: "none",
+                  px: 3,
+                }}
                 onClick={() => handlePageChange(page + 1)}
                 disabled={page === totalPages || loading}
               >
