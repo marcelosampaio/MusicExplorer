@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { CssBaseline } from "@mui/material";
 import Header from "./components/Header";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -10,6 +11,7 @@ import Profile from "./pages/Profile";
 function App() {
   return (
     <>
+      <CssBaseline />
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
