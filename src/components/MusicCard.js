@@ -65,9 +65,11 @@ function MusicCard({ music, isFavorite, onToggleFavorite, onPlayPreview }) {
             position: "absolute",
             bottom: 8,
             right: 8,
+            bgcolor: "rgba(0,0,0,0.6)",
             color: isFavorite ? "#1db954" : "#fff",
             "&:hover": {
               color: isFavorite ? "#1ed760" : "#ccc",
+              bgcolor: "rgba(0,0,0,0.8)",
             },
           }}
         >
