@@ -1,9 +1,21 @@
+import React from "react";
+import { Box } from "@mui/material";
+import LoginForm from "../components/LoginForm";
+
 function Login() {
   return (
-    <div>
-      <h1>Login</h1>
-      <p>Aqui vamos implementar o formulário de login.</p>
-    </div>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "80vh",
+        bgcolor: "background.default",
+        px: 2,
+      }}
+    >
+      <LoginForm />
+    </Box>
   );
 }
 
