@@ -22,7 +22,7 @@ function Home() {
       setErrorMessage("Digite um termo para buscar.");
       setPage(1);
       return;
-    }
+    } 
 
     setLoading(true);
     setErrorMessage("");
