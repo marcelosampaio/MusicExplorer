@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Box, TextField, Button, Typography, Alert } from "@mui/material";
+import Authentication from "../utils/Authentication";
 
 function LoginForm() {
   const [user, setUser] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -13,7 +15,7 @@ function LoginForm() {
     setSuccess("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!user.email.trim() || !user.password.trim()) {
@@ -21,13 +23,43 @@ function LoginForm() {
       return;
     }
 
-    // Mock de login
-    if (user.email === "adm@login.com" && user.password === "123456") {
-      setSuccess("Login realizado com sucesso!");
+    try {
+      setLoading(true);
       setError("");
-    } else {
-      setError("Email ou senha incorretos.");
       setSuccess("");
+
+      // 🔍 Logs de depuração:
+      console.log("=== Tentando login no Supabase ===");
+      console.log("Email digitado:", user.email);
+      console.log("Senha digitada:", user.password);
+      console.log("Objeto Authentication:", Authentication);
+      console.log("Chamando Authentication.login...");
+
+      const { data, error } = await Authentication.login(
+        user.email,
+        user.password
+      );
+
+      console.log("Resposta do Supabase:", { data, error });
+
+      if (error) {
+        console.error("Erro retornado pelo Supabase:", error);
+        setError("Credenciais inválidas. Verifique seu e-mail e senha.");
+        return;
+      }
+
+      if (data?.user) {
+        console.log("Usuário autenticado com sucesso:", data.user);
+        setSuccess("Login realizado com sucesso!");
+      } else {
+        console.warn("Nenhum usuário retornado pelo Supabase.");
+      }
+    } catch (err) {
+      console.error("Erro inesperado durante o login:", err);
+      setError("Ocorreu um erro ao tentar fazer login.");
+    } finally {
+      setLoading(false);
+      console.log("=== Fim do fluxo de login ===");
     }
   };
 
@@ -81,6 +113,7 @@ function LoginForm() {
       <Button
         type="submit"
         variant="contained"
+        disabled={loading}
         fullWidth
         sx={{
           mt: 2,
@@ -92,7 +125,7 @@ function LoginForm() {
           textTransform: "none",
         }}
       >
-        Entrar
+        {loading ? "Entrando..." : "Entrar"}
       </Button>
     </Box>
   );
