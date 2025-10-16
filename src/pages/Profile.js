@@ -1,10 +1,13 @@
+import React from "react";
+import { useAuth } from "../contexts/AuthContext";
+import UserProfileCard from "../components/UserProfileCard";
+
 function Profile() {
-  return (
-    <div>
-      <h2>Perfil do Usuário</h2>
-      <p>Exibição e edição de informações do perfil.</p>
-    </div>
-  );
+  const { user } = useAuth();
+
+  if (!user) return <p>Nenhum usuário autenticado.</p>;
+
+  return <UserProfileCard email={user.email} />;
 }
 
 export default Profile;
