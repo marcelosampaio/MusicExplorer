@@ -9,7 +9,7 @@ function Home() {
   const [loading, setLoading] = useState(false);
   const [favorites, setFavorites] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
-  const [term, setTerm] = useState("");
+  const [_, setTerm] = useState("");
   const [page, setPage] = useState(1);
   const resultsPerPage = 20;
   const currentAudio = useRef(null);

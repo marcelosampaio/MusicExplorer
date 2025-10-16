@@ -1,24 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, TextField, Button, Typography, Alert } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import Authentication from "../utils/Authentication";
+import { useAuth } from "../contexts/AuthContext"; // ✅ import do contexto global
 
 function LoginForm() {
-  const [user, setUser] = useState({ email: "", password: "" });
+  const [userData, setUserData] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { user } = useAuth(); // ✅ acessa usuário autenticado globalmente
+
+  // Se o usuário já estiver logado, redireciona direto para o perfil
+  useEffect(() => {
+    if (user) {
+      navigate("/profile");
+    }
+  }, [user, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUser((prev) => ({ ...prev, [name]: value }));
+    setUserData((prev) => ({ ...prev, [name]: value }));
     setError("");
-    setSuccess("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!user.email.trim() || !user.password.trim()) {
+    if (!userData.email.trim() || !userData.password.trim()) {
       setError("Por favor, preencha todos os campos.");
       return;
     }
@@ -26,40 +35,32 @@ function LoginForm() {
     try {
       setLoading(true);
       setError("");
-      setSuccess("");
 
-      // 🔍 Logs de depuração:
-      console.log("=== Tentando login no Supabase ===");
-      console.log("Email digitado:", user.email);
-      console.log("Senha digitada:", user.password);
-      console.log("Objeto Authentication:", Authentication);
-      console.log("Chamando Authentication.login...");
-
+      console.log("🔑 Tentando login via Supabase...");
       const { data, error } = await Authentication.login(
-        user.email,
-        user.password
+        userData.email,
+        userData.password
       );
 
-      console.log("Resposta do Supabase:", { data, error });
+      console.log("Resposta Supabase:", { data, error });
 
       if (error) {
-        console.error("Erro retornado pelo Supabase:", error);
         setError("Credenciais inválidas. Verifique seu e-mail e senha.");
         return;
       }
 
       if (data?.user) {
-        console.log("Usuário autenticado com sucesso:", data.user);
-        setSuccess("Login realizado com sucesso!");
+        console.log("✅ Login realizado com sucesso:", data.user);
+        // Aqui não precisamos setar nada manualmente
+        // O AuthProvider será atualizado automaticamente via Supabase listener
       } else {
-        console.warn("Nenhum usuário retornado pelo Supabase.");
+        setError("Nenhum usuário retornado pelo Supabase.");
       }
     } catch (err) {
-      console.error("Erro inesperado durante o login:", err);
+      console.error("Erro inesperado:", err);
       setError("Ocorreu um erro ao tentar fazer login.");
     } finally {
       setLoading(false);
-      console.log("=== Fim do fluxo de login ===");
     }
   };
 
@@ -88,13 +89,12 @@ function LoginForm() {
       </Typography>
 
       {error && <Alert severity="error" sx={{ width: "100%" }}>{error}</Alert>}
-      {success && <Alert severity="success" sx={{ width: "100%" }}>{success}</Alert>}
 
       <TextField
         label="E-mail"
         name="email"
         type="email"
-        value={user.email}
+        value={userData.email}
         onChange={handleChange}
         fullWidth
         required
@@ -104,7 +104,7 @@ function LoginForm() {
         label="Senha"
         name="password"
         type="password"
-        value={user.password}
+        value={userData.password}
         onChange={handleChange}
         fullWidth
         required
