@@ -1,4 +1,4 @@
-import supabase from "./SupabaseClient";
+import supabase from "../services/SupabaseClient";
 
 const Authentication = {
   login: async (email, password) => {

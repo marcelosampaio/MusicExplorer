@@ -1,72 +1,64 @@
-import { Box, Link as MuiLink } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { Box, Button, Stack } from "@mui/material";
 
 function NavBar() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/"); // redireciona para home
+  };
+
   return (
     <Box
       component="nav"
       sx={{
         display: "flex",
-        flexDirection: { xs: "column", sm: "row" },
-        alignItems: "center",
-        gap: { xs: "0.5rem", sm: "1rem" },
+        justifyContent: "center",
+        gap: 2,
+        p: 2,
+        bgcolor: "transparent",
       }}
     >
-      <MuiLink
-        component={Link}
-        to="/"
-        underline="none"
-        sx={{
-          color: "#fff",
-          fontSize: { xs: "0.9rem", sm: "1rem", md: "1.1rem" },
-          transition: "opacity 0.2s ease",
-          "&:hover": { opacity: 0.8 },
-        }}
-      >
-        Home
-      </MuiLink>
+      <Stack direction="row" spacing={2}>
+        {/* Sempre visível */}
+        <Button component={Link} to="/" sx={{ color: "white" }}>
+          Home
+        </Button>
 
-      <MuiLink
-        component={Link}
-        to="/login"
-        underline="none"
-        sx={{
-          color: "#fff",
-          fontSize: { xs: "0.9rem", sm: "1rem", md: "1.1rem" },
-          transition: "opacity 0.2s ease",
-          "&:hover": { opacity: 0.8 },
-        }}
-      >
-        Login
-      </MuiLink>
+        {/* Usuário não autenticado */}
+        {!user && (
+          <>
+            <Button component={Link} to="/login" sx={{ color: "white" }}>
+              Login
+            </Button>
+            <Button component={Link} to="/register" sx={{ color: "white" }}>
+              Registro
+            </Button>
+          </>
+        )}
 
-      <MuiLink
-        component={Link}
-        to="/register"
-        underline="none"
-        sx={{
-          color: "#fff",
-          fontSize: { xs: "0.9rem", sm: "1rem", md: "1.1rem" },
-          transition: "opacity 0.2s ease",
-          "&:hover": { opacity: 0.8 },
-        }}
-      >
-        Registro
-      </MuiLink>
-
-      <MuiLink
-        component={Link}
-        to="/profile"
-        underline="none"
-        sx={{
-          color: "#fff",
-          fontSize: { xs: "0.9rem", sm: "1rem", md: "1.1rem" },
-          transition: "opacity 0.2s ease",
-          "&:hover": { opacity: 0.8 },
-        }}
-      >
-        Perfil
-      </MuiLink>
+        {/* Usuário autenticado */}
+        {user && (
+          <>
+            <Button component={Link} to="/profile" sx={{ color: "white" }}>
+              Perfil
+            </Button>
+            <Button
+              onClick={handleLogout}
+              sx={{
+                color: "#fff",
+                border: "1px solid #1DB954",
+                "&:hover": { bgcolor: "rgba(29,185,84,0.1)" },
+              }}
+            >
+              Logout
+            </Button>
+          </>
+        )}
+      </Stack>
     </Box>
   );
 }
