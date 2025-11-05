@@ -87,7 +87,9 @@ function Home() {
         id: item.trackId,
         title: item.trackName,
         artist: item.artistName,
-        cover: item.artworkUrl600 || item.artworkUrl100,
+        cover: item.artworkUrl100
+          ? item.artworkUrl100.replace(/[\d]+x[\d]+bb\.jpg/, "600x600bb.jpg")
+          : "",
         preview: item.previewUrl || null,
       }));
 
