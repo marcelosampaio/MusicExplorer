@@ -1,13 +1,172 @@
-import React from "react";
+import { useEffect, useState, useRef } from "react";
+import {
+  Box,
+  Typography,
+  CircularProgress,
+  Snackbar,
+  Alert,
+  Slide,
+} from "@mui/material";
+import MusicList from "../components/MusicList";
 import { useAuth } from "../contexts/AuthContext";
-import UserProfileCard from "../components/UserProfileCard";
+import supabase from "../services/SupabaseClient";
+
+function SlideUpTransition(props) {
+  return <Slide {...props} direction="up" />;
+}
 
 function Profile() {
   const { user } = useAuth();
+  const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "" });
+  const currentAudio = useRef(null);
 
-  if (!user) return <p>Nenhum usuário autenticado.</p>;
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
 
-  return <UserProfileCard email={user.email} />;
+      try {
+        const { data, error } = await supabase
+          .from("favorites")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+        setFavorites(data || []);
+      } catch (error) {
+        console.error("Erro ao carregar favoritos:", error);
+        setSnackbar({
+          open: true,
+          message: "Erro ao carregar seus favoritos. Tente novamente.",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFavorites();
+  }, [user]);
+
+  const handleToggleFavorite = async (trackId) => {
+    if (!user) return;
+
+    try {
+      const { error } = await supabase
+        .from("favorites")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("track_id", trackId);
+
+      if (error) throw error;
+
+      setFavorites((prev) => prev.filter((fav) => fav.track_id !== trackId));
+    } catch (error) {
+      console.error("Erro ao remover favorito:", error);
+      setSnackbar({
+        open: true,
+        message: "Erro ao remover favorito. Tente novamente.",
+      });
+    }
+  };
+
+  const playPreview = (previewUrl) => {
+    if (!previewUrl) return;
+    if (currentAudio.current) {
+      currentAudio.current.pause();
+      currentAudio.current = null;
+    }
+    const audio = new Audio(previewUrl);
+    audio.play();
+    currentAudio.current = audio;
+    audio.onended = () => {
+      currentAudio.current = null;
+    };
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: "" });
+  };
+
+  return (
+    <Box
+      sx={{
+        px: { xs: 1, sm: 2, md: 3 },
+        mt: 3,
+        maxWidth: 1200,
+        mx: "auto",
+        width: "100%",
+      }}
+    >
+      <Typography
+        variant="h5"
+        align="center"
+        sx={{
+          fontWeight: 600,
+          mb: 3,
+          color: "text.primary",
+        }}
+      >
+        Meus Favoritos
+      </Typography>
+
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
+          <CircularProgress sx={{ color: "#1DB954" }} />
+        </Box>
+      ) : !user ? (
+        <Typography align="center" color="text.secondary" sx={{ mt: 4 }}>
+          Faça login para visualizar suas músicas favoritas 🎧
+        </Typography>
+      ) : favorites.length === 0 ? (
+        <Typography align="center" color="text.secondary" sx={{ mt: 4 }}>
+          Você ainda não adicionou músicas aos favoritos.
+        </Typography>
+      ) : (
+        <MusicList
+          musics={favorites.map((f) => ({
+            id: f.track_id,
+            title: f.track_name,
+            artist: f.artist_name,
+            cover: f.artwork_url,
+            preview: f.preview_url,
+          }))}
+          favorites={favorites.map((f) => f.track_id)}
+          onToggleFavorite={handleToggleFavorite}
+          onPlayPreview={playPreview}
+        />
+      )}
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        TransitionComponent={SlideUpTransition}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          icon={false}
+          sx={{
+            width: "100%",
+            bgcolor: "#1DB954",
+            color: "#fff",
+            fontWeight: 500,
+            fontSize: 15,
+            borderRadius: 2,
+            boxShadow: 4,
+            "& .MuiAlert-message": { textAlign: "center" },
+          }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </Box>
+  );
 }
 
 export default Profile;

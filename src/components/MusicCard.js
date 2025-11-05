@@ -14,7 +14,7 @@ function MusicCard({ music, isFavorite, onToggleFavorite, onPlayPreview }) {
     <Card
       sx={{
         width: "100%",
-        maxWidth: 260, // largura máxima ideal no desktop
+        maxWidth: 260,
         height: "100%",
         display: "flex",
         flexDirection: "column",
@@ -52,10 +52,15 @@ function MusicCard({ music, isFavorite, onToggleFavorite, onPlayPreview }) {
             bgcolor: "rgba(0,0,0,0.6)",
             color: "#fff",
             "&:hover": { bgcolor: "rgba(0,0,0,0.8)" },
-            p: 0.5,
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <PlayArrow />
+          <PlayArrow sx={{ fontSize: 26 }} />
         </IconButton>
 
         {/* Botão de favorito */}
@@ -71,9 +76,19 @@ function MusicCard({ music, isFavorite, onToggleFavorite, onPlayPreview }) {
               color: isFavorite ? "#1ed760" : "#ccc",
               bgcolor: "rgba(0,0,0,0.8)",
             },
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          {isFavorite ? <Favorite /> : <FavoriteBorder />}
+          {isFavorite ? (
+            <Favorite sx={{ fontSize: 24 }} />
+          ) : (
+            <FavoriteBorder sx={{ fontSize: 24 }} />
+          )}
         </IconButton>
       </Box>
 
