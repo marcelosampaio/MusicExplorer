@@ -1,20 +1,36 @@
 import { useState, useRef, useEffect } from "react";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Stack,
+  Typography,
+  Snackbar,
+  Alert,
+  Slide,
+} from "@mui/material";
 import SearchBar from "../components/SearchBar";
 import MusicList from "../components/MusicList";
+import { useAuth } from "../contexts/AuthContext";
+
+// Função auxiliar para animação do Snackbar
+function SlideUpTransition(props) {
+  return <Slide {...props} direction="up" />;
+}
 
 function Home() {
-  const [allResults, setAllResults] = useState([]); // todos os resultados da API
-  const [musics, setMusics] = useState([]); // resultados da página atual
+  const [allResults, setAllResults] = useState([]);
+  const [musics, setMusics] = useState([]);
   const [loading, setLoading] = useState(false);
   const [favorites, setFavorites] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [_, setTerm] = useState("");
   const [page, setPage] = useState(1);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "" });
   const resultsPerPage = 20;
   const currentAudio = useRef(null);
+  const { user } = useAuth();
 
-  // Função para buscar músicas na API iTunes
+  // Busca músicas da API iTunes
   const fetchMusics = async (searchTerm) => {
     if (!searchTerm.trim()) {
       setAllResults([]);
@@ -22,7 +38,7 @@ function Home() {
       setErrorMessage("Digite um termo para buscar.");
       setPage(1);
       return;
-    } 
+    }
 
     setLoading(true);
     setErrorMessage("");
@@ -52,7 +68,7 @@ function Home() {
       }));
 
       setAllResults(formatted);
-      setPage(1); // resetar página
+      setPage(1);
       setMusics(formatted.slice(0, resultsPerPage));
     } catch (error) {
       console.error("Erro ao buscar músicas:", error);
@@ -65,33 +81,37 @@ function Home() {
     }
   };
 
-  // Atualiza a lista de músicas quando muda a página
   useEffect(() => {
     const start = (page - 1) * resultsPerPage;
     setMusics(allResults.slice(start, start + resultsPerPage));
   }, [page, allResults]);
 
-  // Submeter busca
   const handleSearch = (searchTerm) => {
     setTerm(searchTerm);
     fetchMusics(searchTerm);
   };
 
-  // Navegação de páginas
   const handlePageChange = (newPage) => {
     if (newPage < 1 || newPage > Math.ceil(allResults.length / resultsPerPage)) return;
     setPage(newPage);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Favoritar/desfavoritar
+  // Novo: valida login antes de favoritar
   const toggleFavorite = (id) => {
+    if (!user) {
+      setSnackbar({
+        open: true,
+        message: "Faça login para adicionar músicas aos seus favoritos 🎧",
+      });
+      return;
+    }
+
     setFavorites((prev) =>
       prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id]
     );
   };
 
-  // Tocar preview
   const playPreview = (previewUrl) => {
     if (!previewUrl) return;
 
@@ -109,6 +129,10 @@ function Home() {
   };
 
   const totalPages = Math.ceil(allResults.length / resultsPerPage);
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ open: false, message: "" });
+  };
 
   return (
     <Box
@@ -184,6 +208,34 @@ function Home() {
           )}
         </>
       )}
+
+      {/* Snackbar customizado estilo Spotify */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        TransitionComponent={SlideUpTransition}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          icon={false}
+          sx={{
+            width: "100%",
+            bgcolor: "#1DB954",
+            color: "#fff",
+            fontWeight: 500,
+            fontSize: 15,
+            borderRadius: 2,
+            boxShadow: 4,
+            "& .MuiAlert-message": {
+              textAlign: "center",
+            },
+          }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
