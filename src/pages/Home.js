@@ -11,8 +11,8 @@ import {
 import SearchBar from "../components/SearchBar";
 import MusicList from "../components/MusicList";
 import { useAuth } from "../contexts/AuthContext";
+import supabase from "../services/SupabaseClient";
 
-// Função auxiliar para animação do Snackbar
 function SlideUpTransition(props) {
   return <Slide {...props} direction="up" />;
 }
@@ -29,6 +29,30 @@ function Home() {
   const resultsPerPage = 20;
   const currentAudio = useRef(null);
   const { user } = useAuth();
+
+  // Carrega favoritos do usuário autenticado
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      if (!user) {
+        setFavorites([]);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("favorites")
+        .select("track_id")
+        .eq("user_id", user.id);
+
+      if (error) {
+        console.error("Erro ao buscar favoritos:", error);
+        return;
+      }
+
+      setFavorites(data.map((f) => f.track_id));
+    };
+
+    fetchFavorites();
+  }, [user]);
 
   // Busca músicas da API iTunes
   const fetchMusics = async (searchTerm) => {
@@ -63,8 +87,8 @@ function Home() {
         id: item.trackId,
         title: item.trackName,
         artist: item.artistName,
-        cover: item.artworkUrl100.replace(/(\d+)x\1bb/, "600x600bb"),
-        preview: item.previewUrl,
+        cover: item.artworkUrl600 || item.artworkUrl100,
+        preview: item.previewUrl || null,
       }));
 
       setAllResults(formatted);
@@ -92,13 +116,14 @@ function Home() {
   };
 
   const handlePageChange = (newPage) => {
-    if (newPage < 1 || newPage > Math.ceil(allResults.length / resultsPerPage)) return;
+    if (newPage < 1 || newPage > Math.ceil(allResults.length / resultsPerPage))
+      return;
     setPage(newPage);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Novo: valida login antes de favoritar
-  const toggleFavorite = (id) => {
+  // Favoritar/desfavoritar com Supabase
+  const toggleFavorite = async (musicId) => {
     if (!user) {
       setSnackbar({
         open: true,
@@ -107,19 +132,50 @@ function Home() {
       return;
     }
 
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((fid) => fid !== id) : [...prev, id]
-    );
+    const isFav = favorites.includes(musicId);
+    const selectedMusic = allResults.find((m) => m.id === musicId);
+    if (!selectedMusic) return;
+
+    try {
+      if (isFav) {
+        // Remover favorito
+        const { error } = await supabase
+          .from("favorites")
+          .delete()
+          .eq("user_id", user.id)
+          .eq("track_id", musicId);
+        if (error) throw error;
+
+        setFavorites((prev) => prev.filter((fid) => fid !== musicId));
+      } else {
+        // Adicionar favorito
+        const { error } = await supabase.from("favorites").insert({
+          user_id: user.id,
+          track_id: selectedMusic.id,
+          track_name: selectedMusic.title,
+          artist_name: selectedMusic.artist,
+          artwork_url: selectedMusic.cover,
+          preview_url: selectedMusic.preview,
+        });
+        if (error) throw error;
+
+        setFavorites((prev) => [...prev, musicId]);
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar favoritos:", error);
+      setSnackbar({
+        open: true,
+        message: "Erro ao atualizar favoritos. Tente novamente.",
+      });
+    }
   };
 
   const playPreview = (previewUrl) => {
     if (!previewUrl) return;
-
     if (currentAudio.current) {
       currentAudio.current.pause();
       currentAudio.current = null;
     }
-
     const audio = new Audio(previewUrl);
     audio.play();
     currentAudio.current = audio;
@@ -209,7 +265,7 @@ function Home() {
         </>
       )}
 
-      {/* Snackbar customizado estilo Spotify */}
+      {/* Snackbar Spotify-style */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
@@ -228,9 +284,7 @@ function Home() {
             fontSize: 15,
             borderRadius: 2,
             boxShadow: 4,
-            "& .MuiAlert-message": {
-              textAlign: "center",
-            },
+            "& .MuiAlert-message": { textAlign: "center" },
           }}
         >
           {snackbar.message}
