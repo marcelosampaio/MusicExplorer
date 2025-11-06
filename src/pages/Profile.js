@@ -118,7 +118,7 @@ function Profile() {
           variant="h5"
           sx={{ fontWeight: 600, mb: 1, color: "text.primary" }}
         >
-          Meus Dados
+          Informações do Usuário
         </Typography>
 
         {user ? (

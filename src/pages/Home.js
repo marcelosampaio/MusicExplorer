@@ -4,6 +4,7 @@ import {
   Button,
   Stack,
   Typography,
+  CircularProgress,
   Snackbar,
   Alert,
   Slide,
@@ -140,7 +141,6 @@ function Home() {
 
     try {
       if (isFav) {
-        // Remover favorito
         const { error } = await supabase
           .from("favorites")
           .delete()
@@ -150,7 +150,6 @@ function Home() {
 
         setFavorites((prev) => prev.filter((fid) => fid !== musicId));
       } else {
-        // Adicionar favorito
         const { error } = await supabase.from("favorites").insert({
           user_id: user.id,
           track_id: selectedMusic.id,
@@ -204,19 +203,15 @@ function Home() {
     >
       <SearchBar onSearch={handleSearch} />
 
-      {loading && (
-        <Typography align="center" sx={{ my: 4 }}>
-          Carregando...
-        </Typography>
-      )}
-
-      {!loading && errorMessage && (
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
+          <CircularProgress sx={{ color: "#1DB954" }} />
+        </Box>
+      ) : errorMessage ? (
         <Typography align="center" color="error" sx={{ my: 4 }}>
           {errorMessage}
         </Typography>
-      )}
-
-      {!loading && !errorMessage && (
+      ) : (
         <>
           <MusicList
             musics={musics}
