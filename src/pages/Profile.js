@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Box, Typography, Snackbar, Alert, Slide } from "@mui/material";
 import MusicList from "../components/MusicList";
 import Spinner from "../components/Spinner";
+import UserInfo from "../components/UserInfo";
 import { useAuth } from "../contexts/AuthContext";
 import supabase from "../services/SupabaseClient";
 
@@ -97,40 +98,8 @@ function Profile() {
         textAlign: "center",
       }}
     >
-      <Box
-        sx={{
-          mb: 4,
-          p: 3,
-          borderRadius: 2,
-          bgcolor: "background.paper",
-          boxShadow: 3,
-          width: "60%",
-          mx: "auto",
-        }}
-      >
-        <Typography
-          variant="h5"
-          sx={{ fontWeight: 600, mb: 1, color: "text.primary" }}
-        >
-          Meus Dados
-        </Typography>
-
-        {user ? (
-          <>
-            <Typography color="text.secondary" sx={{ mb: 0.5 }}>
-              <strong>Email:</strong> {user.email}
-            </Typography>
-            <Typography color="text.secondary">
-              <strong>Data de criação:</strong>{" "}
-              {new Date(user.created_at).toLocaleDateString("pt-BR")}
-            </Typography>
-          </>
-        ) : (
-          <Typography color="text.secondary">
-            Faça login para visualizar seus dados.
-          </Typography>
-        )}
-      </Box>
+      
+      <UserInfo user={user} />
 
       <Typography
         variant="h5"
