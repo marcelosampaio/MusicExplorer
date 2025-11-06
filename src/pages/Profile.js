@@ -1,13 +1,8 @@
 import { useEffect, useState, useRef } from "react";
-import {
-  Box,
-  Typography,
-  CircularProgress,
-  Snackbar,
-  Alert,
-  Slide,
-} from "@mui/material";
+import { Box, Typography, Snackbar, Alert, Slide } from "@mui/material";
 import MusicList from "../components/MusicList";
+import Spinner from "../components/Spinner";
+import UserInfo from "../components/UserInfo";
 import { useAuth } from "../contexts/AuthContext";
 import supabase from "../services/SupabaseClient";
 
@@ -100,8 +95,12 @@ function Profile() {
         maxWidth: 1200,
         mx: "auto",
         width: "100%",
+        textAlign: "center",
       }}
     >
+      
+      <UserInfo user={user} />
+
       <Typography
         variant="h5"
         align="center"
@@ -115,9 +114,7 @@ function Profile() {
       </Typography>
 
       {loading ? (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
-          <CircularProgress sx={{ color: "#1DB954" }} />
-        </Box>
+        <Spinner />
       ) : !user ? (
         <Typography align="center" color="text.secondary" sx={{ mt: 4 }}>
           Faça login para visualizar suas músicas favoritas 🎧

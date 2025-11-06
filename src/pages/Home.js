@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import SearchBar from "../components/SearchBar";
 import MusicList from "../components/MusicList";
+import Spinner from "../components/Spinner";
 import { useAuth } from "../contexts/AuthContext";
 import supabase from "../services/SupabaseClient";
 
@@ -124,7 +125,6 @@ function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Favoritar/desfavoritar com Supabase
   const toggleFavorite = async (musicId) => {
     if (!user) {
       setSnackbar({
@@ -140,7 +140,6 @@ function Home() {
 
     try {
       if (isFav) {
-        // Remover favorito
         const { error } = await supabase
           .from("favorites")
           .delete()
@@ -150,7 +149,6 @@ function Home() {
 
         setFavorites((prev) => prev.filter((fid) => fid !== musicId));
       } else {
-        // Adicionar favorito
         const { error } = await supabase.from("favorites").insert({
           user_id: user.id,
           track_id: selectedMusic.id,
@@ -204,19 +202,13 @@ function Home() {
     >
       <SearchBar onSearch={handleSearch} />
 
-      {loading && (
-        <Typography align="center" sx={{ my: 4 }}>
-          Carregando...
-        </Typography>
-      )}
-
-      {!loading && errorMessage && (
+      {loading ? (
+        <Spinner />
+      ) : errorMessage ? (
         <Typography align="center" color="error" sx={{ my: 4 }}>
           {errorMessage}
         </Typography>
-      )}
-
-      {!loading && !errorMessage && (
+      ) : (
         <>
           <MusicList
             musics={musics}
@@ -267,7 +259,6 @@ function Home() {
         </>
       )}
 
-      {/* Snackbar Spotify-style */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
