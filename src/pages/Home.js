@@ -13,6 +13,7 @@ import MusicList from "../components/MusicList";
 import Spinner from "../components/Spinner";
 import { useAuth } from "../contexts/AuthContext";
 import supabase from "../services/SupabaseClient";
+import { searchMusic } from "../services/iTunesDataManager";
 
 function SlideUpTransition(props) {
   return <Slide {...props} direction="up" />;
@@ -31,7 +32,7 @@ function Home() {
   const currentAudio = useRef(null);
   const { user } = useAuth();
 
-  // Carrega favoritos do usuário autenticado
+  // 🔹 Carrega favoritos do usuário autenticado
   useEffect(() => {
     const fetchFavorites = async () => {
       if (!user) {
@@ -55,7 +56,7 @@ function Home() {
     fetchFavorites();
   }, [user]);
 
-  // Busca músicas da API iTunes
+  // 🔹 Busca músicas via iTunesDataManager
   const fetchMusics = async (searchTerm) => {
     if (!searchTerm.trim()) {
       setAllResults([]);
@@ -69,14 +70,9 @@ function Home() {
     setErrorMessage("");
 
     try {
-      const response = await fetch(
-        `https://corsproxy.io/?https://itunes.apple.com/search?term=${encodeURIComponent(
-          searchTerm
-        )}&media=music&limit=200`
-      );
-      const data = await response.json();
+      const results = await searchMusic(searchTerm);
 
-      if (!data.results || data.results.length === 0) {
+      if (results.length === 0) {
         setAllResults([]);
         setMusics([]);
         setErrorMessage(`Nenhum resultado encontrado para "${searchTerm}".`);
@@ -84,19 +80,9 @@ function Home() {
         return;
       }
 
-      const formatted = data.results.map((item) => ({
-        id: item.trackId,
-        title: item.trackName,
-        artist: item.artistName,
-        cover: item.artworkUrl100
-          ? item.artworkUrl100.replace(/[\d]+x[\d]+bb\.jpg/, "600x600bb.jpg")
-          : "",
-        preview: item.previewUrl || null,
-      }));
-
-      setAllResults(formatted);
+      setAllResults(results);
       setPage(1);
-      setMusics(formatted.slice(0, resultsPerPage));
+      setMusics(results.slice(0, resultsPerPage));
     } catch (error) {
       console.error("Erro ao buscar músicas:", error);
       setAllResults([]);
@@ -108,6 +94,7 @@ function Home() {
     }
   };
 
+  // 🔹 Atualiza páginação local
   useEffect(() => {
     const start = (page - 1) * resultsPerPage;
     setMusics(allResults.slice(start, start + resultsPerPage));
@@ -118,6 +105,7 @@ function Home() {
     fetchMusics(searchTerm);
   };
 
+  // 🔹 Navegação entre páginas
   const handlePageChange = (newPage) => {
     if (newPage < 1 || newPage > Math.ceil(allResults.length / resultsPerPage))
       return;
@@ -125,6 +113,7 @@ function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // 🔹 Favoritar/desfavoritar música
   const toggleFavorite = async (musicId) => {
     if (!user) {
       setSnackbar({
@@ -170,6 +159,7 @@ function Home() {
     }
   };
 
+  // 🔹 Reprodução de prévia
   const playPreview = (previewUrl) => {
     if (!previewUrl) return;
     if (currentAudio.current) {
@@ -259,6 +249,7 @@ function Home() {
         </>
       )}
 
+      {/* Snackbar estilo Spotify */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
