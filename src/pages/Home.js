@@ -4,13 +4,13 @@ import {
   Button,
   Stack,
   Typography,
-  CircularProgress,
   Snackbar,
   Alert,
   Slide,
 } from "@mui/material";
 import SearchBar from "../components/SearchBar";
 import MusicList from "../components/MusicList";
+import Spinner from "../components/Spinner";
 import { useAuth } from "../contexts/AuthContext";
 import supabase from "../services/SupabaseClient";
 
@@ -125,7 +125,6 @@ function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Favoritar/desfavoritar com Supabase
   const toggleFavorite = async (musicId) => {
     if (!user) {
       setSnackbar({
@@ -204,9 +203,7 @@ function Home() {
       <SearchBar onSearch={handleSearch} />
 
       {loading ? (
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
-          <CircularProgress sx={{ color: "#1DB954" }} />
-        </Box>
+        <Spinner />
       ) : errorMessage ? (
         <Typography align="center" color="error" sx={{ my: 4 }}>
           {errorMessage}
@@ -262,7 +259,6 @@ function Home() {
         </>
       )}
 
-      {/* Snackbar Spotify-style */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}

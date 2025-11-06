@@ -1,8 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { TextField, Button, Box } from "@mui/material";
 
 function SearchBar({ onSearch }) {
   const [term, setTerm] = useState("");
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -28,6 +33,7 @@ function SearchBar({ onSearch }) {
       }}
     >
       <TextField
+        inputRef={inputRef} // adiciona referência para foco
         variant="outlined"
         placeholder="Buscar músicas, álbuns, artistas..."
         value={term}
@@ -38,6 +44,12 @@ function SearchBar({ onSearch }) {
           bgcolor: "background.paper",
           borderRadius: 1,
           input: { fontSize: { xs: 16, sm: 18 } },
+          "& .MuiOutlinedInput-root": {
+            "&.Mui-focused fieldset": {
+              borderColor: "#1DB954",
+              borderWidth: 2,
+            },
+          },
         }}
       />
       <Button
