@@ -12,8 +12,12 @@ import SearchBar from "../components/SearchBar";
 import MusicList from "../components/MusicList";
 import Spinner from "../components/Spinner";
 import { useAuth } from "../contexts/AuthContext";
-import supabase from "../services/SupabaseClient";
 import { searchMusic } from "../services/iTunesDataManager";
+import {
+  fetchFavorites,
+  addFavorite,
+  removeFavorite,
+} from "../services/FavoritesManager";
 
 function SlideUpTransition(props) {
   return <Slide {...props} direction="up" />;
@@ -25,38 +29,31 @@ function Home() {
   const [loading, setLoading] = useState(false);
   const [favorites, setFavorites] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
-  const [_, setTerm] = useState("");
   const [page, setPage] = useState(1);
   const [snackbar, setSnackbar] = useState({ open: false, message: "" });
   const resultsPerPage = 20;
   const currentAudio = useRef(null);
   const { user } = useAuth();
 
-  // 🔹 Carrega favoritos do usuário autenticado
+  // 🔸 Carrega favoritos do usuário autenticado
   useEffect(() => {
-    const fetchFavorites = async () => {
+    const loadFavorites = async () => {
       if (!user) {
         setFavorites([]);
         return;
       }
 
-      const { data, error } = await supabase
-        .from("favorites")
-        .select("track_id")
-        .eq("user_id", user.id);
-
-      if (error) {
+      try {
+        const data = await fetchFavorites(user.id);
+        setFavorites(data.map((f) => f.track_id));
+      } catch (error) {
         console.error("Erro ao buscar favoritos:", error);
-        return;
       }
-
-      setFavorites(data.map((f) => f.track_id));
     };
-
-    fetchFavorites();
+    loadFavorites();
   }, [user]);
 
-  // 🔹 Busca músicas via iTunesDataManager
+  // 🔹 Busca músicas via iTunes API
   const fetchMusics = async (searchTerm) => {
     if (!searchTerm.trim()) {
       setAllResults([]);
@@ -94,18 +91,15 @@ function Home() {
     }
   };
 
-  // 🔹 Atualiza páginação local
   useEffect(() => {
     const start = (page - 1) * resultsPerPage;
     setMusics(allResults.slice(start, start + resultsPerPage));
   }, [page, allResults]);
 
   const handleSearch = (searchTerm) => {
-    setTerm(searchTerm);
     fetchMusics(searchTerm);
   };
 
-  // 🔹 Navegação entre páginas
   const handlePageChange = (newPage) => {
     if (newPage < 1 || newPage > Math.ceil(allResults.length / resultsPerPage))
       return;
@@ -113,7 +107,6 @@ function Home() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // 🔹 Favoritar/desfavoritar música
   const toggleFavorite = async (musicId) => {
     if (!user) {
       setSnackbar({
@@ -129,25 +122,10 @@ function Home() {
 
     try {
       if (isFav) {
-        const { error } = await supabase
-          .from("favorites")
-          .delete()
-          .eq("user_id", user.id)
-          .eq("track_id", musicId);
-        if (error) throw error;
-
+        await removeFavorite(user.id, musicId);
         setFavorites((prev) => prev.filter((fid) => fid !== musicId));
       } else {
-        const { error } = await supabase.from("favorites").insert({
-          user_id: user.id,
-          track_id: selectedMusic.id,
-          track_name: selectedMusic.title,
-          artist_name: selectedMusic.artist,
-          artwork_url: selectedMusic.cover,
-          preview_url: selectedMusic.preview,
-        });
-        if (error) throw error;
-
+        await addFavorite(user.id, selectedMusic);
         setFavorites((prev) => [...prev, musicId]);
       }
     } catch (error) {
@@ -159,7 +137,6 @@ function Home() {
     }
   };
 
-  // 🔹 Reprodução de prévia
   const playPreview = (previewUrl) => {
     if (!previewUrl) return;
     if (currentAudio.current) {
@@ -249,7 +226,6 @@ function Home() {
         </>
       )}
 
-      {/* Snackbar estilo Spotify */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}

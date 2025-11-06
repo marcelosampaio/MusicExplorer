@@ -4,7 +4,10 @@ import MusicList from "../components/MusicList";
 import Spinner from "../components/Spinner";
 import UserInfo from "../components/UserInfo";
 import { useAuth } from "../contexts/AuthContext";
-import supabase from "../services/SupabaseClient";
+import {
+  fetchFavorites,
+  removeFavorite,
+} from "../services/FavoritesManager";
 
 function SlideUpTransition(props) {
   return <Slide {...props} direction="up" />;
@@ -18,20 +21,14 @@ function Profile() {
   const currentAudio = useRef(null);
 
   useEffect(() => {
-    const fetchFavorites = async () => {
+    const loadFavorites = async () => {
       if (!user) {
         setLoading(false);
         return;
       }
 
       try {
-        const { data, error } = await supabase
-          .from("favorites")
-          .select("*")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false });
-
-        if (error) throw error;
+        const data = await fetchFavorites(user.id, true);
         setFavorites(data || []);
       } catch (error) {
         console.error("Erro ao carregar favoritos:", error);
@@ -43,23 +40,14 @@ function Profile() {
         setLoading(false);
       }
     };
-
-    fetchFavorites();
+    loadFavorites();
   }, [user]);
 
   const handleToggleFavorite = async (trackId) => {
     if (!user) return;
-
     try {
-      const { error } = await supabase
-        .from("favorites")
-        .delete()
-        .eq("user_id", user.id)
-        .eq("track_id", trackId);
-
-      if (error) throw error;
-
-      setFavorites((prev) => prev.filter((fav) => fav.track_id !== trackId));
+      await removeFavorite(user.id, trackId);
+      setFavorites((prev) => prev.filter((f) => f.track_id !== trackId));
     } catch (error) {
       console.error("Erro ao remover favorito:", error);
       setSnackbar({
@@ -98,7 +86,6 @@ function Profile() {
         textAlign: "center",
       }}
     >
-      
       <UserInfo user={user} />
 
       <Typography
