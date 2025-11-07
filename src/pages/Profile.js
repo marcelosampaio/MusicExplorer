@@ -1,13 +1,11 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Box, Typography, Snackbar, Alert, Slide } from "@mui/material";
 import MusicList from "../components/MusicList";
 import Spinner from "../components/Spinner";
 import UserInfo from "../components/UserInfo";
 import { useAuth } from "../contexts/AuthContext";
-import {
-  fetchFavorites,
-  removeFavorite,
-} from "../services/FavoritesManager";
+import { fetchFavorites, removeFavorite } from "../services/FavoritesManager";
+import useAudioPlayer from "../hooks/useAudioPlayer";
 
 function SlideUpTransition(props) {
   return <Slide {...props} direction="up" />;
@@ -18,7 +16,8 @@ function Profile() {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [snackbar, setSnackbar] = useState({ open: false, message: "" });
-  const currentAudio = useRef(null);
+
+  const { isPlaying, currentTrackUrl, toggleAudio } = useAudioPlayer();
 
   useEffect(() => {
     const loadFavorites = async () => {
@@ -55,20 +54,6 @@ function Profile() {
         message: "Erro ao remover favorito. Tente novamente.",
       });
     }
-  };
-
-  const playPreview = (previewUrl) => {
-    if (!previewUrl) return;
-    if (currentAudio.current) {
-      currentAudio.current.pause();
-      currentAudio.current = null;
-    }
-    const audio = new Audio(previewUrl);
-    audio.play();
-    currentAudio.current = audio;
-    audio.onended = () => {
-      currentAudio.current = null;
-    };
   };
 
   const handleCloseSnackbar = () => {
@@ -121,7 +106,9 @@ function Profile() {
           }))}
           favorites={favorites.map((f) => f.track_id)}
           onToggleFavorite={handleToggleFavorite}
-          onPlayPreview={playPreview}
+          onPlayPreview={toggleAudio}
+          isPlaying={isPlaying}
+          currentTrackUrl={currentTrackUrl}
         />
       )}
 
