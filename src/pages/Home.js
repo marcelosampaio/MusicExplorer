@@ -55,8 +55,8 @@ function Home() {
     loadFavorites();
   }, [user]);
 
-  // 🔹 Busca músicas
-  const fetchMusics = async (searchTerm) => {
+  // 🔹 Busca músicas com filtro
+  const fetchMusics = async (searchTerm, filter = "musicTrack") => {
     if (!searchTerm.trim()) {
       setAllResults([]);
       setMusics([]);
@@ -69,7 +69,7 @@ function Home() {
     setErrorMessage("");
 
     try {
-      const results = await searchMusic(searchTerm);
+      const results = await searchMusic(searchTerm, 200, filter);
       if (results.length === 0) {
         setAllResults([]);
         setMusics([]);
@@ -92,12 +92,12 @@ function Home() {
     }
   };
 
+  const handleSearch = (term, filter) => fetchMusics(term, filter);
+
   useEffect(() => {
     const start = (page - 1) * resultsPerPage;
     setMusics(allResults.slice(start, start + resultsPerPage));
   }, [page, allResults]);
-
-  const handleSearch = (term) => fetchMusics(term);
 
   const handlePageChange = (newPage) => {
     if (newPage < 1 || newPage > Math.ceil(allResults.length / resultsPerPage))
