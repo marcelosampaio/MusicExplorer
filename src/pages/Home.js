@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -18,6 +18,7 @@ import {
   addFavorite,
   removeFavorite,
 } from "../services/FavoritesManager";
+import useAudioPlayer from "../hooks/useAudioPlayer"; // 🎧 Hook integrado
 
 function SlideUpTransition(props) {
   return <Slide {...props} direction="up" />;
@@ -32,17 +33,18 @@ function Home() {
   const [page, setPage] = useState(1);
   const [snackbar, setSnackbar] = useState({ open: false, message: "" });
   const resultsPerPage = 20;
-  const currentAudio = useRef(null);
   const { user } = useAuth();
 
-  // 🔸 Carrega favoritos do usuário autenticado
+  // 🎧 Hook de controle de áudio
+  const { toggleAudio, isPlaying, currentTrackUrl } = useAudioPlayer();
+
+  // 🔸 Carrega favoritos
   useEffect(() => {
     const loadFavorites = async () => {
       if (!user) {
         setFavorites([]);
         return;
       }
-
       try {
         const data = await fetchFavorites(user.id);
         setFavorites(data.map((f) => f.track_id));
@@ -53,7 +55,7 @@ function Home() {
     loadFavorites();
   }, [user]);
 
-  // 🔹 Busca músicas via iTunes API
+  // 🔹 Busca músicas
   const fetchMusics = async (searchTerm) => {
     if (!searchTerm.trim()) {
       setAllResults([]);
@@ -68,7 +70,6 @@ function Home() {
 
     try {
       const results = await searchMusic(searchTerm);
-
       if (results.length === 0) {
         setAllResults([]);
         setMusics([]);
@@ -96,9 +97,7 @@ function Home() {
     setMusics(allResults.slice(start, start + resultsPerPage));
   }, [page, allResults]);
 
-  const handleSearch = (searchTerm) => {
-    fetchMusics(searchTerm);
-  };
+  const handleSearch = (term) => fetchMusics(term);
 
   const handlePageChange = (newPage) => {
     if (newPage < 1 || newPage > Math.ceil(allResults.length / resultsPerPage))
@@ -137,25 +136,8 @@ function Home() {
     }
   };
 
-  const playPreview = (previewUrl) => {
-    if (!previewUrl) return;
-    if (currentAudio.current) {
-      currentAudio.current.pause();
-      currentAudio.current = null;
-    }
-    const audio = new Audio(previewUrl);
-    audio.play();
-    currentAudio.current = audio;
-    audio.onended = () => {
-      currentAudio.current = null;
-    };
-  };
-
   const totalPages = Math.ceil(allResults.length / resultsPerPage);
-
-  const handleCloseSnackbar = () => {
-    setSnackbar({ open: false, message: "" });
-  };
+  const handleCloseSnackbar = () => setSnackbar({ open: false, message: "" });
 
   return (
     <Box
@@ -181,7 +163,9 @@ function Home() {
             musics={musics}
             favorites={favorites}
             onToggleFavorite={toggleFavorite}
-            onPlayPreview={playPreview}
+            onPlayPreview={toggleAudio}
+            isPlaying={isPlaying}
+            currentTrackUrl={currentTrackUrl}
           />
 
           {totalPages > 1 && (

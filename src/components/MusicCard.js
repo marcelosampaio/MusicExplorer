@@ -7,9 +7,15 @@ import {
   IconButton,
   Box,
 } from "@mui/material";
-import { Favorite, FavoriteBorder, PlayArrow } from "@mui/icons-material";
+import { Favorite, FavoriteBorder, PlayArrow, Stop } from "@mui/icons-material";
 
-function MusicCard({ music, isFavorite, onToggleFavorite, onPlayPreview }) {
+function MusicCard({
+  music,
+  isFavorite,
+  isTrackPlaying,
+  onToggleFavorite,
+  onPlayPreview,
+}) {
   return (
     <Card
       sx={{
@@ -42,7 +48,7 @@ function MusicCard({ music, isFavorite, onToggleFavorite, onPlayPreview }) {
           }}
         />
 
-        {/* Botão de play */}
+        {/* Botão de play/stop */}
         <IconButton
           onClick={() => onPlayPreview(music.preview)}
           sx={{
@@ -60,7 +66,11 @@ function MusicCard({ music, isFavorite, onToggleFavorite, onPlayPreview }) {
             justifyContent: "center",
           }}
         >
-          <PlayArrow sx={{ fontSize: 26 }} />
+          {isTrackPlaying ? (
+            <Stop sx={{ fontSize: 26 }} />
+          ) : (
+            <PlayArrow sx={{ fontSize: 26 }} />
+          )}
         </IconButton>
 
         {/* Botão de favorito */}

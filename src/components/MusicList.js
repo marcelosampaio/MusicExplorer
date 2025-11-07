@@ -8,20 +8,27 @@ function MusicList({
   loadingFavorites = [],
   onToggleFavorite,
   onPlayPreview,
+  isPlaying,
+  currentTrackUrl,
 }) {
   return (
     <Grid container spacing={2} justifyContent="center">
-      {musics.map((music) => (
-        <Grid item key={music.id}>
-          <MusicCard
-            music={music}
-            isFavorite={favorites.includes(music.id)}
-            isLoading={loadingFavorites.includes(music.id)}
-            onToggleFavorite={onToggleFavorite}
-            onPlayPreview={onPlayPreview}
-          />
-        </Grid>
-      ))}
+      {musics.map((music) => {
+        const isTrackPlaying = isPlaying && currentTrackUrl === music.preview;
+
+        return (
+          <Grid item key={music.id}>
+            <MusicCard
+              music={music}
+              isFavorite={favorites.includes(music.id)}
+              isLoading={loadingFavorites.includes(music.id)}
+              onToggleFavorite={onToggleFavorite}
+              onPlayPreview={onPlayPreview}
+              isTrackPlaying={isTrackPlaying} // passa o boolean correto
+            />
+          </Grid>
+        );
+      })}
     </Grid>
   );
 }
