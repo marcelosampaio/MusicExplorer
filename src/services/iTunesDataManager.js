@@ -1,14 +1,14 @@
 const BASE_URL = "https://itunes.apple.com/search";
 const PROXY = "https://corsproxy.io/?";
 
-export async function searchMusic(term, limit = 200) {
+export async function searchMusic(term, limit = 200, entity = "musicTrack") {
   if (!term.trim()) {
     throw new Error("Termo de busca vazio");
   }
 
   const url = `${PROXY}${BASE_URL}?term=${encodeURIComponent(
     term
-  )}&media=music&limit=${limit}`;
+  )}&media=music&entity=${entity}&limit=${limit}`;
 
   const response = await fetch(url);
   if (!response.ok) {
@@ -21,9 +21,10 @@ export async function searchMusic(term, limit = 200) {
   }
 
   return data.results.map((item) => ({
-    id: item.trackId,
-    title: item.trackName,
-    artist: item.artistName,
+    id: item.trackId || item.collectionId || item.artistId,
+    title:
+      item.trackName || item.collectionName || item.artistName || "Sem título",
+    artist: item.artistName || "",
     cover: item.artworkUrl100
       ? item.artworkUrl100.replace(/[\d]+x[\d]+bb\.jpg/, "600x600bb.jpg")
       : "",
