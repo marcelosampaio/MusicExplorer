@@ -1,12 +1,12 @@
 import React from "react";
 import { Box, Typography, IconButton, Avatar, Slide } from "@mui/material";
 import { PlayArrow, Stop } from "@mui/icons-material";
-import { useAudioPlayerContext } from "../contexts/AudioPlayerProvider";
+import { useAudioPlayerContext } from "../contexts/AudioPlayerContext";
 
 function MiniPlayer() {
   const { isPlaying, currentTrack, toggleAudio } = useAudioPlayerContext();
 
-  if (!currentTrack) return null; // não renderiza nada se não há faixa atual
+  if (!currentTrack) return null;
 
   return (
     <Slide direction="up" in={true} mountOnEnter unmountOnExit>
@@ -59,7 +59,7 @@ function MiniPlayer() {
         </Box>
 
         <IconButton
-          onClick={() => toggleAudio(currentTrack.preview)}
+          onClick={() => toggleAudio(currentTrack)}
           sx={{
             bgcolor: "#1DB954",
             color: "#fff",
@@ -68,7 +68,11 @@ function MiniPlayer() {
             height: 50,
           }}
         >
-          {isPlaying ? <Stop sx={{ fontSize: 30 }} /> : <PlayArrow sx={{ fontSize: 30 }} />}
+          {isPlaying ? (
+            <Stop sx={{ fontSize: 30 }} />
+          ) : (
+            <PlayArrow sx={{ fontSize: 30 }} />
+          )}
         </IconButton>
       </Box>
     </Slide>

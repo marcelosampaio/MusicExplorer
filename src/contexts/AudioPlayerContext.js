@@ -1,5 +1,11 @@
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 
-const AudioPlayerContext = createContext(null);
+export const AudioPlayerContext = createContext(null);
 
-export default AudioPlayerContext;
+export function useAudioPlayerContext() {
+  const context = useContext(AudioPlayerContext);
+  if (!context) {
+    throw new Error("useAudioPlayerContext deve ser usado dentro de AudioPlayerProvider");
+  }
+  return context;
+}
