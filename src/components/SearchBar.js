@@ -32,26 +32,34 @@ function SearchBar({ onSearch }) {
         flexWrap: "wrap",
       }}
     >
-      <TextField
-        inputRef={inputRef} // adiciona referência para foco
-        variant="outlined"
-        placeholder="Buscar músicas, álbuns, artistas..."
-        value={term}
-        onChange={(e) => setTerm(e.target.value)}
-        sx={{
-          flexGrow: 1,
-          minWidth: { xs: "180px", sm: "300px" },
-          bgcolor: "background.paper",
-          borderRadius: 1,
-          input: { fontSize: { xs: 16, sm: 18 } },
-          "& .MuiOutlinedInput-root": {
-            "&.Mui-focused fieldset": {
-              borderColor: "#1DB954",
-              borderWidth: 2,
-            },
-          },
-        }}
-      />
+<TextField
+  inputRef={inputRef}
+  variant="outlined"
+  placeholder="Buscar músicas, álbuns, artistas..."
+  value={term}
+  onChange={(e) => setTerm(e.target.value)}
+  sx={{
+    flexGrow: 1,
+    minWidth: { xs: "180px", sm: "300px" },
+    bgcolor: "background.paper",
+    borderRadius: 1,
+    input: { fontSize: { xs: 16, sm: 18 } },
+    "& .MuiOutlinedInput-root": {
+      "& fieldset": {
+        borderColor: "#a9e7c1",
+        borderWidth: 1.5,
+      },
+      "&:hover fieldset": {
+        borderColor: "#57d78c",
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: "#1DB954",
+        borderWidth: 2,
+      },
+    },
+  }}
+/>
+
       <Button
         type="submit"
         variant="contained"
