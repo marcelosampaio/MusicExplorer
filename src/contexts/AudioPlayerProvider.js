@@ -33,26 +33,20 @@ export function AudioPlayerProvider({ children }) {
     };
   };
 
-  const pauseAudio = () => {
+  const stopAudio = () => {
     if (audioRef.current) {
       audioRef.current.pause();
+      audioRef.current.currentTime = 0;
       setIsPlaying(false);
     }
   };
 
-  const toggleAudio = (urlOrTrack) => {
-    // suporta tanto url quanto objeto completo
-    const url = typeof urlOrTrack === "string" ? urlOrTrack : urlOrTrack?.preview;
+  const toggleAudio = (track) => {
+    if (!track?.preview) return;
 
-    if (!url) return;
-
-    if (isPlaying && currentTrack?.preview === url) {
-      pauseAudio();
+    if (isPlaying && currentTrack?.preview === track.preview) {
+      stopAudio();
     } else {
-      const track =
-        typeof urlOrTrack === "object"
-          ? urlOrTrack
-          : { preview: url, title: "Desconhecida" };
       playAudio(track);
     }
   };
@@ -72,7 +66,7 @@ export function AudioPlayerProvider({ children }) {
         isPlaying,
         currentTrack,
         playAudio,
-        pauseAudio,
+        stopAudio,
         toggleAudio,
       }}
     >

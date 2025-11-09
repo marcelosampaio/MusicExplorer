@@ -50,7 +50,7 @@ function MusicCard({
 
         {/* Botão de play/stop */}
         <IconButton
-          onClick={() => onPlayPreview(music.preview)}
+          onClick={() => onPlayPreview(music)}
           sx={{
             position: "absolute",
             bottom: 8,
