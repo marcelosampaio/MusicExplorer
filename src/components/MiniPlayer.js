@@ -7,7 +7,7 @@ function MiniPlayer() {
   const { isPlaying, currentTrack, toggleAudio } = useAudioPlayerContext();
 
   if (!currentTrack) return null;
-
+  
   return (
     <Slide direction="up" in={true} mountOnEnter unmountOnExit>
       <Box
