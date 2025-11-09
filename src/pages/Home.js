@@ -18,7 +18,7 @@ import {
   addFavorite,
   removeFavorite,
 } from "../services/FavoritesManager";
-import useAudioPlayer from "../hooks/useAudioPlayer"; // 🎧 Hook integrado
+import { useAudioPlayerContext } from "../contexts/AudioPlayerContext"; // 🎧 Global Player Context
 
 function SlideUpTransition(props) {
   return <Slide {...props} direction="up" />;
@@ -35,8 +35,8 @@ function Home() {
   const resultsPerPage = 20;
   const { user } = useAuth();
 
-  // 🎧 Hook de controle de áudio
-  const { toggleAudio, isPlaying, currentTrackUrl } = useAudioPlayer();
+  // 🎧 Global Player
+  const { toggleAudio, isPlaying, currentTrack } = useAudioPlayerContext();
 
   // 🔸 Carrega favoritos
   useEffect(() => {
@@ -147,6 +147,8 @@ function Home() {
         maxWidth: 1200,
         mx: "auto",
         width: "100%",
+        // 🧩 Espaço extra quando o Mini Player está ativo
+        pb: currentTrack ? 10 : 0,
       }}
     >
       <SearchBar onSearch={handleSearch} />
@@ -165,7 +167,7 @@ function Home() {
             onToggleFavorite={toggleFavorite}
             onPlayPreview={toggleAudio}
             isPlaying={isPlaying}
-            currentTrackUrl={currentTrackUrl}
+            currentTrackUrl={currentTrack?.preview || null}
           />
 
           {totalPages > 1 && (

@@ -5,7 +5,7 @@ import Spinner from "../components/Spinner";
 import UserInfo from "../components/UserInfo";
 import { useAuth } from "../contexts/AuthContext";
 import { fetchFavorites, removeFavorite } from "../services/FavoritesManager";
-import useAudioPlayer from "../hooks/useAudioPlayer";
+import { useAudioPlayerContext } from "../contexts/AudioPlayerContext";
 
 function SlideUpTransition(props) {
   return <Slide {...props} direction="up" />;
@@ -17,7 +17,7 @@ function Profile() {
   const [loading, setLoading] = useState(true);
   const [snackbar, setSnackbar] = useState({ open: false, message: "" });
 
-  const { isPlaying, currentTrackUrl, toggleAudio } = useAudioPlayer();
+  const { isPlaying, currentTrack, toggleAudio } = useAudioPlayerContext();
 
   useEffect(() => {
     const loadFavorites = async () => {
@@ -69,6 +69,8 @@ function Profile() {
         mx: "auto",
         width: "100%",
         textAlign: "center",
+        // 🧩 Espaço extra quando o Mini Player está ativo
+        pb: currentTrack ? 10 : 0,
       }}
     >
       <UserInfo user={user} />
@@ -108,7 +110,7 @@ function Profile() {
           onToggleFavorite={handleToggleFavorite}
           onPlayPreview={toggleAudio}
           isPlaying={isPlaying}
-          currentTrackUrl={currentTrackUrl}
+          currentTrackUrl={currentTrack?.preview || null}
         />
       )}
 
