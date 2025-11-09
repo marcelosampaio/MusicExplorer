@@ -16,7 +16,8 @@ export function AudioPlayerProvider({ children }) {
     const audio = new Audio(track.preview);
     audioRef.current = audio;
 
-    audio.play()
+    audio
+      .play()
       .then(() => {
         setCurrentTrack(track);
         setIsPlaying(true);
@@ -27,9 +28,7 @@ export function AudioPlayerProvider({ children }) {
       });
 
     audio.onended = () => {
-      setIsPlaying(false);
-      setCurrentTrack(null);
-      audioRef.current = null;
+      stopAudio();
     };
   };
 
@@ -37,8 +36,10 @@ export function AudioPlayerProvider({ children }) {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
-      setIsPlaying(false);
+      audioRef.current = null;
     }
+    setIsPlaying(false);
+    setCurrentTrack(null);
   };
 
   const toggleAudio = (track) => {

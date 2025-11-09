@@ -48,7 +48,6 @@ function MusicCard({
           }}
         />
 
-        {/* Botão de play/stop */}
         <IconButton
           onClick={() => onPlayPreview(music)}
           sx={{
@@ -73,7 +72,6 @@ function MusicCard({
           )}
         </IconButton>
 
-        {/* Botão de favorito */}
         <IconButton
           onClick={() => onToggleFavorite(music.id)}
           sx={{

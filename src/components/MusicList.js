@@ -24,7 +24,7 @@ function MusicList({
               isLoading={loadingFavorites.includes(music.id)}
               onToggleFavorite={onToggleFavorite}
               onPlayPreview={onPlayPreview}
-              isTrackPlaying={isTrackPlaying} // passa o boolean correto
+              isTrackPlaying={isTrackPlaying}
             />
           </Grid>
         );

@@ -1,80 +1,95 @@
 import React from "react";
-import { Box, Typography, IconButton, Avatar, Slide } from "@mui/material";
-import { PlayArrow, Stop } from "@mui/icons-material";
+import {
+  Box,
+  Typography,
+  IconButton,
+  Slide,
+  Card,
+  CardMedia,
+  CardContent,
+} from "@mui/material";
+import { Stop } from "@mui/icons-material";
 import { useAudioPlayerContext } from "../contexts/AudioPlayerContext";
 
 function MiniPlayer() {
-  const { isPlaying, currentTrack, toggleAudio } = useAudioPlayerContext();
+  const { currentTrack, isPlaying, stopAudio } = useAudioPlayerContext();
+  const visible = isPlaying && currentTrack;
 
-  if (!currentTrack) return null;
-  
+  if (!visible) return null;
+
   return (
-    <Slide direction="up" in={true} mountOnEnter unmountOnExit>
-      <Box
+    <Slide direction="up" in={visible} mountOnEnter unmountOnExit>
+      <Card
         sx={{
           position: "fixed",
           bottom: 0,
           left: 0,
-          width: "100%",
-          bgcolor: "background.paper",
-          borderTop: "1px solid rgba(255,255,255,0.1)",
-          boxShadow: "0 -2px 10px rgba(0,0,0,0.4)",
+          right: 0,
+          zIndex: 1200,
+          bgcolor: "#121212",
+          color: "#fff",
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
           px: 2,
           py: 1,
-          zIndex: 1200,
+          boxShadow: "0 -2px 12px rgba(0,0,0,0.6)",
+          borderTop: "1px solid rgba(255,255,255,0.1)",
+          transition: "all 0.4s ease-in-out",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <Avatar
-            src={currentTrack.cover}
-            alt={currentTrack.title}
-            sx={{ width: 48, height: 48, borderRadius: 1 }}
-          />
-          <Box sx={{ display: "flex", flexDirection: "column" }}>
-            <Typography
-              variant="subtitle1"
-              sx={{
-                color: "text.primary",
-                fontWeight: 600,
-                fontSize: { xs: 14, sm: 16 },
-              }}
-              noWrap
-            >
-              {currentTrack.title}
-            </Typography>
-            <Typography
-              variant="subtitle2"
-              sx={{
-                color: "text.secondary",
-                fontSize: { xs: 12, sm: 14 },
-              }}
-              noWrap
-            >
-              {currentTrack.artist}
-            </Typography>
-          </Box>
-        </Box>
-
-        <IconButton
-          onClick={() => toggleAudio(currentTrack)}
+        {/* Capa */}
+        <CardMedia
+          component="img"
+          image={currentTrack?.cover || ""}
+          alt={currentTrack?.title || "Faixa"}
           sx={{
-            bgcolor: "#1DB954",
-            color: "#fff",
-            "&:hover": { bgcolor: "#1ed760" },
-            width: 50,
-            height: 50,
+            width: 56,
+            height: 56,
+            borderRadius: 1,
+            objectFit: "cover",
+            mr: 2,
+          }}
+        />
+
+        {/* Título e artista */}
+        <CardContent
+          sx={{
+            flexGrow: 1,
+            py: 0,
+            "&:last-child": { pb: 0 },
+            overflow: "hidden",
           }}
         >
-          {isPlaying ? (
-            <Stop sx={{ fontSize: 30 }} />
-          ) : (
-            <PlayArrow sx={{ fontSize: 30 }} />
-          )}
+          <Typography
+            variant="subtitle1"
+            noWrap
+            sx={{ fontWeight: 500, fontSize: 15 }}
+          >
+            {currentTrack?.title || "Reproduzindo..."}
+          </Typography>
+          <Typography
+            variant="subtitle2"
+            noWrap
+            sx={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}
+          >
+            {currentTrack?.artist || ""}
+          </Typography>
+        </CardContent>
+
+        {/* Botão Stop */}
+        <IconButton
+          onClick={stopAudio}
+          sx={{
+            color: "#fff",
+            bgcolor: "rgba(255,255,255,0.1)",
+            "&:hover": { bgcolor: "rgba(255,255,255,0.25)" },
+            width: 42,
+            height: 42,
+          }}
+        >
+          <Stop />
         </IconButton>
-      </Box>
+      </Card>
     </Slide>
   );
 }
