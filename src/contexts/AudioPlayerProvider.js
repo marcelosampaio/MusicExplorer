@@ -15,20 +15,19 @@ export function AudioPlayerProvider({ children }) {
 
     const audio = new Audio(track.preview);
     audioRef.current = audio;
+    
+    setCurrentTrack(track);
+    setIsPlaying(true);
 
-    audio
-      .play()
-      .then(() => {
-        setCurrentTrack(track);
-        setIsPlaying(true);
-      })
-      .catch((err) => {
-        console.error("Erro ao reproduzir áudio:", err);
-        setIsPlaying(false);
-      });
+    audio.play().catch((err) => {
+      console.error("Erro ao reproduzir áudio:", err);
+      setIsPlaying(false);
+    });
 
     audio.onended = () => {
-      stopAudio();
+      setIsPlaying(false);
+      setCurrentTrack(null);
+      audioRef.current = null;
     };
   };
 
@@ -44,7 +43,6 @@ export function AudioPlayerProvider({ children }) {
 
   const toggleAudio = (track) => {
     if (!track?.preview) return;
-
     if (isPlaying && currentTrack?.preview === track.preview) {
       stopAudio();
     } else {

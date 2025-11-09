@@ -1,7 +1,5 @@
-import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { CssBaseline } from "@mui/material";
-
 import { AuthProvider } from "./contexts/AuthProvider";
 import { AudioPlayerProvider } from "./contexts/AudioPlayerProvider";
 
