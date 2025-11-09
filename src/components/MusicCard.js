@@ -7,14 +7,20 @@ import {
   IconButton,
   Box,
 } from "@mui/material";
-import { Favorite, FavoriteBorder, PlayArrow } from "@mui/icons-material";
+import { Favorite, FavoriteBorder, PlayArrow, Stop } from "@mui/icons-material";
 
-function MusicCard({ music, isFavorite, onToggleFavorite, onPlayPreview }) {
+function MusicCard({
+  music,
+  isFavorite,
+  isTrackPlaying,
+  onToggleFavorite,
+  onPlayPreview,
+}) {
   return (
     <Card
       sx={{
         width: "100%",
-        maxWidth: 260, // largura máxima ideal no desktop
+        maxWidth: 260,
         height: "100%",
         display: "flex",
         flexDirection: "column",
@@ -42,9 +48,8 @@ function MusicCard({ music, isFavorite, onToggleFavorite, onPlayPreview }) {
           }}
         />
 
-        {/* Botão de play */}
         <IconButton
-          onClick={() => onPlayPreview(music.preview)}
+          onClick={() => onPlayPreview(music)}
           sx={{
             position: "absolute",
             bottom: 8,
@@ -52,13 +57,21 @@ function MusicCard({ music, isFavorite, onToggleFavorite, onPlayPreview }) {
             bgcolor: "rgba(0,0,0,0.6)",
             color: "#fff",
             "&:hover": { bgcolor: "rgba(0,0,0,0.8)" },
-            p: 0.5,
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <PlayArrow />
+          {isTrackPlaying ? (
+            <Stop sx={{ fontSize: 26 }} />
+          ) : (
+            <PlayArrow sx={{ fontSize: 26 }} />
+          )}
         </IconButton>
 
-        {/* Botão de favorito */}
         <IconButton
           onClick={() => onToggleFavorite(music.id)}
           sx={{
@@ -71,9 +84,19 @@ function MusicCard({ music, isFavorite, onToggleFavorite, onPlayPreview }) {
               color: isFavorite ? "#1ed760" : "#ccc",
               bgcolor: "rgba(0,0,0,0.8)",
             },
+            width: 40,
+            height: 40,
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          {isFavorite ? <Favorite /> : <FavoriteBorder />}
+          {isFavorite ? (
+            <Favorite sx={{ fontSize: 24 }} />
+          ) : (
+            <FavoriteBorder sx={{ fontSize: 24 }} />
+          )}
         </IconButton>
       </Box>
 
